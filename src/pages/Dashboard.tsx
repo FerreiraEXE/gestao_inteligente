@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 
 export function Dashboard() {
   const { user } = useAuth();
-  const { orders, searchOrders } = useOrders();
+  const { searchOrders } = useOrders();
   
   // Get recent orders - just the last 5
   const recentOrders = searchOrders({
