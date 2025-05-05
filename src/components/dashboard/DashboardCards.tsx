@@ -274,7 +274,7 @@ export function DashboardCards() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {inventoryData.map((entry, index) => (
+                  {inventoryData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

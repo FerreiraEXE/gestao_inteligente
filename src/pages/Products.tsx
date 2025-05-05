@@ -1,5 +1,9 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useProducts } from "@/contexts/ProductContext";
+
 import { PageHeader } from "@/components/common/PageHeader";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,13 +12,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -47,7 +46,7 @@ const productSchema = z.object({
 type ProductFormValues = z.infer<typeof productSchema>;
 
 export default function Products() {
-  const { products, categories = [], suppliers = [], createProduct } = useProducts();
+  const { categories = [], createProduct } = useProducts();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm<ProductFormValues>({
@@ -69,8 +68,10 @@ export default function Products() {
     try {
       await createProduct({
         ...data,
+        imageUrl: data.imageUrl ?? "",
         isActive: true,
       });
+      
       setIsDialogOpen(false);
       form.reset();
     } catch (error) {
