@@ -76,8 +76,8 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (documentExists) {
       toast({
         variant: 'destructive',
-        title: 'Error creating client',
-        description: `A client with this ${clientData.documentType === 'cpf' ? 'CPF' : 'CNPJ'} already exists`,
+        title: 'Erro ao criar cliente',
+        description: `Já existe cliente com este ${clientData.documentType === 'cpf' ? 'CPF' : 'CNPJ'}`,
       });
       throw new Error(`A client with this ${clientData.documentType === 'cpf' ? 'CPF' : 'CNPJ'} already exists`);
     }
@@ -86,8 +86,8 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!validateDocument(clientData.document, clientData.documentType)) {
       toast({
         variant: 'destructive',
-        title: 'Error creating client',
-        description: `Invalid ${clientData.documentType === 'cpf' ? 'CPF' : 'CNPJ'} format`,
+        title: 'Erro ao criar cliente',
+        description: `Formato de ${clientData.documentType === 'cpf' ? 'CPF' : 'CNPJ'} inválido`,
       });
       throw new Error(`Invalid ${clientData.documentType === 'cpf' ? 'CPF' : 'CNPJ'} format`);
     }
@@ -102,8 +102,8 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setClients([...clients, newClient]);
     
     toast({
-      title: 'Client created',
-      description: 'Client has been created successfully',
+      title: 'Cliente criado',
+      description: 'Cliente cadastrado com sucesso',
     });
     
     return newClient;
@@ -124,8 +124,8 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (documentExists) {
       toast({
         variant: 'destructive',
-        title: 'Error updating client',
-        description: `A client with this ${updatedClient.documentType === 'cpf' ? 'CPF' : 'CNPJ'} already exists`,
+        title: 'Erro ao atualizar',
+        description: `Já existe cliente com este ${updatedClient.documentType === 'cpf' ? 'CPF' : 'CNPJ'}`,
       });
       throw new Error(`A client with this ${updatedClient.documentType === 'cpf' ? 'CPF' : 'CNPJ'} already exists`);
     }
@@ -134,8 +134,8 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!validateDocument(updatedClient.document, updatedClient.documentType)) {
       toast({
         variant: 'destructive',
-        title: 'Error updating client',
-        description: `Invalid ${updatedClient.documentType === 'cpf' ? 'CPF' : 'CNPJ'} format`,
+        title: 'Erro ao atualizar',
+        description: `Formato de ${updatedClient.documentType === 'cpf' ? 'CPF' : 'CNPJ'} inválido`,
       });
       throw new Error(`Invalid ${updatedClient.documentType === 'cpf' ? 'CPF' : 'CNPJ'} format`);
     }
@@ -149,8 +149,8 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setClients(updatedClients);
     
     toast({
-      title: 'Client updated',
-      description: 'Client has been updated successfully',
+      title: 'Cliente atualizado',
+      description: 'Cliente atualizado com sucesso',
     });
   };
 
@@ -166,7 +166,7 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setClients(updatedClients);
     
     toast({
-      title: 'Client deactivated',
+      title: 'Cliente desativado',
       description: 'Cliente desativado com sucesso',
     });
   };

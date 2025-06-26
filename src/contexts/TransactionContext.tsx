@@ -76,8 +76,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (transactionData.amount <= 0) {
       toast({
         variant: 'destructive',
-        title: 'Error creating transaction',
-        description: 'Transaction amount must be greater than zero',
+        title: 'Erro ao criar transação',
+        description: 'O valor deve ser maior que zero',
       });
       throw new Error('Transaction amount must be greater than zero');
     }
@@ -92,8 +92,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setTransactions([...transactions, newTransaction]);
     
     toast({
-      title: 'Transaction created',
-      description: 'Transaction has been created successfully',
+      title: 'Transação criada',
+      description: 'Transação registrada com sucesso',
     });
     
     return newTransaction;
@@ -107,8 +107,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (updatedTransaction.amount <= 0) {
       toast({
         variant: 'destructive',
-        title: 'Error updating transaction',
-        description: 'Transaction amount must be greater than zero',
+        title: 'Erro ao atualizar transação',
+        description: 'O valor deve ser maior que zero',
       });
       throw new Error('Transaction amount must be greater than zero');
     }
@@ -122,8 +122,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setTransactions(updatedTransactions);
     
     toast({
-      title: 'Transaction updated',
-      description: 'Transaction has been updated successfully',
+      title: 'Transação atualizada',
+      description: 'Transação atualizada com sucesso',
     });
   };
 
@@ -132,8 +132,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setTransactions(updatedTransactions);
     
     toast({
-      title: 'Transaction deleted',
-      description: 'Transaction has been deleted successfully',
+      title: 'Transação removida',
+      description: 'Transação removida com sucesso',
     });
   };
 

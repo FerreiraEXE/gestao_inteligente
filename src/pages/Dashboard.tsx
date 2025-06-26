@@ -25,9 +25,9 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Painel</h1>
         <p className="text-sm text-muted-foreground">
-          Bem vindo de volta, {user?.name || 'User'}!
+          Bem vindo de volta, {user?.name || 'Usuário'}!
         </p>
       </div>
       

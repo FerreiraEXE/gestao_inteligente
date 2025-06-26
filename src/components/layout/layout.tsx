@@ -7,9 +7,7 @@ import {
   Users,
   ShoppingCart,
   Truck,
-  BarChart3,
   Receipt,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -89,22 +87,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       title: "Transações",
       href: "/transacoes",
       icon: <Receipt className="h-5 w-5" />,
-    },
-    {
-      title: "Relatórios",
-      href: "/relatorios",
-      icon: <BarChart3 className="h-5 w-5" />,
-    },
-    {
-      title: "Usuários",
-      href: "/usuarios",
-      icon: <User className="h-5 w-5" />,
-      requireAdmin: true,
-    },
-    {
-      title: "Configurações",
-      href: "/configuracoes",
-      icon: <Settings className="h-5 w-5" />,
     },
   ];
 
@@ -216,10 +198,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                     <User className="mr-2 h-4 w-4" />
                     Perfil
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/configuracoes")}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Configurações
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -243,7 +221,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
+        <main className="mx-auto flex-1 max-w-7xl overflow-auto p-4 md:p-6">{children}</main>
       </div>
 
       <Toaster />

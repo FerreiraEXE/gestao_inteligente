@@ -12,6 +12,9 @@ import Layout from './components/layout/layout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Products from './pages/Products';
+import Clients from './pages/Clients';
+import Orders from './pages/Orders';
+import Transactions from './pages/Transactions';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -58,6 +61,36 @@ function App() {
                         <ProtectedRoute>
                           <Layout>
                             <Products />
+                          </Layout>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/clientes"
+                      element={
+                        <ProtectedRoute>
+                          <Layout>
+                            <Clients />
+                          </Layout>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/pedidos"
+                      element={
+                        <ProtectedRoute>
+                          <Layout>
+                            <Orders />
+                          </Layout>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/transacoes"
+                      element={
+                        <ProtectedRoute>
+                          <Layout>
+                            <Transactions />
                           </Layout>
                         </ProtectedRoute>
                       }

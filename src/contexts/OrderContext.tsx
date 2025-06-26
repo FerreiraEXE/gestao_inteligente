@@ -83,8 +83,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (orderData.items.length === 0) {
       toast({
         variant: 'destructive',
-        title: 'Error creating order',
-        description: 'Order must have at least one item',
+        title: 'Erro ao criar pedido',
+        description: 'O pedido deve ter ao menos um item',
       });
       throw new Error('Order must have at least one item');
     }
@@ -96,8 +96,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (!product) {
         toast({
           variant: 'destructive',
-          title: 'Error creating order',
-          description: `Product with ID ${item.productId} not found`,
+          title: 'Erro ao criar pedido',
+          description: `Produto com ID ${item.productId} não encontrado`,
         });
         throw new Error(`Product with ID ${item.productId} not found`);
       }
@@ -105,8 +105,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (product.stockQuantity < item.quantity) {
         toast({
           variant: 'destructive',
-          title: 'Error creating order',
-          description: `Not enough stock for product: ${product.name}`,
+          title: 'Erro ao criar pedido',
+          description: `Estoque insuficiente para o produto: ${product.name}`,
         });
         throw new Error(`Not enough stock for product: ${product.name}`);
       }
@@ -128,8 +128,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setOrders([...orders, newOrder]);
     
     toast({
-      title: 'Order created',
-      description: 'Order has been created successfully',
+      title: 'Pedido criado',
+      description: 'Pedido registrado com sucesso',
     });
     
     return newOrder;
@@ -144,8 +144,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!existingOrder) {
       toast({
         variant: 'destructive',
-        title: 'Error updating order',
-        description: 'Order not found',
+        title: 'Erro ao atualizar pedido',
+        description: 'Pedido não encontrado',
       });
       throw new Error('Order not found');
     }
@@ -174,8 +174,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setOrders(updatedOrders);
     
     toast({
-      title: 'Order updated',
-      description: 'Order has been updated successfully',
+      title: 'Pedido atualizado',
+      description: 'Pedido atualizado com sucesso',
     });
   };
 
@@ -185,8 +185,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!order) {
       toast({
         variant: 'destructive',
-        title: 'Error deleting order',
-        description: 'Order not found',
+        title: 'Erro ao excluir pedido',
+        description: 'Pedido não encontrado',
       });
       return;
     }
@@ -209,8 +209,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setOrders(updatedOrders);
     
     toast({
-      title: 'Order deleted',
-      description: 'Order has been deleted successfully',
+      title: 'Pedido excluído',
+      description: 'Pedido excluído com sucesso',
     });
   };
 
