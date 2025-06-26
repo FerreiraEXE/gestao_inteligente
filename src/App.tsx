@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Products from './pages/Products';
 import Clients from './pages/Clients';
+import Suppliers from './pages/Suppliers';
 import Orders from './pages/Orders';
 import Transactions from './pages/Transactions';
 
@@ -71,6 +72,16 @@ function App() {
                         <ProtectedRoute>
                           <Layout>
                             <Clients />
+                          </Layout>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/fornecedores"
+                      element={
+                        <ProtectedRoute>
+                          <Layout>
+                            <Suppliers />
                           </Layout>
                         </ProtectedRoute>
                       }

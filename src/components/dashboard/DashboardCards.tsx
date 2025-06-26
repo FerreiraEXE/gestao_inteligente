@@ -6,10 +6,12 @@ import { useProducts } from '@/contexts/ProductContext';
 import { useClients } from '@/contexts/ClientContext';
 import { useOrders } from '@/contexts/OrderContext';
 import { useTransactions } from '@/contexts/TransactionContext';
+import { useSuppliers } from '@/contexts/SupplierContext';
 import { 
   Package, 
   Users, 
-  ShoppingCart, 
+  ShoppingCart,
+  Truck,
   TrendingUp,
   TrendingDown,
   ArrowUpRight,
@@ -19,6 +21,7 @@ import {
 export function DashboardCards() {
   const { products } = useProducts();
   const { clients } = useClients();
+  const { suppliers } = useSuppliers();
   const { orders } = useOrders();
   const { transactions } = useTransactions();
   
@@ -28,6 +31,8 @@ export function DashboardCards() {
     lowStockProducts: 0,
     totalClients: 0,
     activeClients: 0,
+    totalSuppliers: 0,
+    activeSuppliers: 0,
     totalOrders: 0,
     ordersThisMonth: 0,
     totalRevenue: 0,
@@ -45,6 +50,7 @@ export function DashboardCards() {
     const activeProducts = products.filter((p) => p.isActive);
     const lowStockProducts = activeProducts.filter((p) => p.stockQuantity < 10);
     const activeClients = clients.filter((c) => c.isActive);
+    const activeSuppliers = suppliers.filter((s) => s.isActive);
     
     // Current date info
     const now = new Date();
@@ -66,6 +72,8 @@ export function DashboardCards() {
       lowStockProducts: lowStockProducts.length,
       totalClients: clients.length,
       activeClients: activeClients.length,
+      totalSuppliers: suppliers.length,
+      activeSuppliers: activeSuppliers.length,
       totalOrders: orders.length,
       ordersThisMonth: ordersThisMonth.length,
       totalRevenue,
@@ -163,7 +171,31 @@ export function DashboardCards() {
           </p>
         </CardContent>
       </Card>
-      
+
+      {/* Suppliers Card */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">Fornecedores</CardTitle>
+          <Truck className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.activeSuppliers}</div>
+          <p className="text-xs text-muted-foreground">
+            <span className="flex items-center">
+              {stats.activeSuppliers === stats.totalSuppliers ? (
+                <TrendingUp className="mr-1 h-3 w-3 text-primary" />
+              ) : (
+                <TrendingDown className="mr-1 h-3 w-3 text-muted-foreground" />
+              )}
+              {stats.totalSuppliers > 0
+                ? ((stats.activeSuppliers / stats.totalSuppliers) * 100).toFixed(0)
+                : 0}
+              % ativo
+            </span>
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Orders Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">

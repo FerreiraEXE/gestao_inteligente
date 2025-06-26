@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { Supplier, SearchParams, PaginatedResponse } from '@/types';
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { useProducts } from './ProductContext';
 import { toast } from '@/hooks/use-toast';
 
 // Initial suppliers
@@ -9,6 +10,7 @@ const INITIAL_SUPPLIERS: Supplier[] = [
     id: 'sup_1',
     name: 'Tech Distributors Inc.',
     contactName: 'Sarah Johnson',
+    product: 'Eletrônicos',
     email: 'sjohnson@techdist.com',
     phone: '555-789-1234',
     document: '12.345.678/0001-90',
@@ -30,6 +32,7 @@ const INITIAL_SUPPLIERS: Supplier[] = [
     id: 'sup_2',
     name: 'Office Solutions Ltd.',
     contactName: 'Michael Chen',
+    product: 'Móveis para escritório',
     email: 'mchen@officesolutions.com',
     phone: '555-456-7890',
     document: '98.765.432/0001-10',
@@ -51,6 +54,7 @@ const INITIAL_SUPPLIERS: Supplier[] = [
     id: 'sup_3',
     name: 'Fashion Wholesale Co.',
     contactName: 'Emma Rodriguez',
+    product: 'Roupas',
     email: 'erodriguez@fashionwholesale.com',
     phone: '555-321-6547',
     document: '87.654.321/0001-01',
@@ -84,6 +88,7 @@ const SupplierContext = createContext<SupplierContextType | undefined>(undefined
 
 export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [suppliers, setSuppliers] = useLocalStorage<Supplier[]>('suppliers', INITIAL_SUPPLIERS);
+  const { products, updateProduct } = useProducts();
 
   // Supplier CRUD functions
   const createSupplier = (supplierData: Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>): Supplier => {
@@ -183,9 +188,21 @@ export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         ? { ...supplier, isActive: false, updatedAt: new Date().toISOString() }
         : supplier
     );
-    
+
     setSuppliers(updatedSuppliers);
-    
+
+    // Remove supplier reference from products
+    const affected = products.filter((p) => p.supplierId === id && p.isActive);
+    if (affected.length > 0) {
+      affected.forEach((p) => {
+        updateProduct({ ...p, supplierId: '' });
+      });
+      toast({
+        title: 'Produtos atualizados',
+        description: `Fornecedor removido de ${affected.length} produtos`,
+      });
+    }
+
     toast({
       title: 'Supplier deactivated',
       description: 'Supplier has been deactivated successfully',
@@ -200,9 +217,10 @@ export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // By default, only show active suppliers
       if (!supplier.isActive) return false;
       
-      // Search by name, contact name, email, or document
+      // Search by name, product, contact name, email, or document
       const matchesSearch = search
         ? supplier.name.toLowerCase().includes(search.toLowerCase()) ||
+          supplier.product.toLowerCase().includes(search.toLowerCase()) ||
           supplier.contactName.toLowerCase().includes(search.toLowerCase()) ||
           supplier.email.toLowerCase().includes(search.toLowerCase()) ||
           supplier.document.includes(search)
