@@ -112,7 +112,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       updatedAt: new Date().toISOString(),
     };
 
-    setProducts((prev) => [...prev, newProduct]);
+    setProducts((prev) => [newProduct, ...prev]);
     
     toast({
       title: 'Produto criado',

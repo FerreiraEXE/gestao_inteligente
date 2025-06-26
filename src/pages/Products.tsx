@@ -117,6 +117,7 @@ export default function Products() {
       setIsDialogOpen(false);
       setEditingProduct(null);
       form.reset();
+      setSearch("");
     } catch (error) {
       console.error("Erro ao salvar produto:", error);
     }
