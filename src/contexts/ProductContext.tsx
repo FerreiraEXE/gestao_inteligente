@@ -115,8 +115,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProducts([...products, newProduct]);
     
     toast({
-      title: 'Product created',
-      description: 'Product has been created successfully',
+      title: 'Produto criado',
+      description: 'Produto cadastrado com sucesso',
     });
     
     return newProduct;
@@ -135,8 +135,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProducts(updatedProducts);
     
     toast({
-      title: 'Product updated',
-      description: 'Product has been updated successfully',
+      title: 'Produto atualizado',
+      description: 'Produto atualizado com sucesso',
     });
   };
 
@@ -150,8 +150,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProducts(updatedProducts);
     
     toast({
-      title: 'Product deleted',
-      description: 'Product has been deleted successfully',
+      title: 'Produto removido',
+      description: 'Produto removido com sucesso',
     });
   };
 
@@ -247,8 +247,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCategories([...categories, newCategory]);
     
     toast({
-      title: 'Category created',
-      description: 'Category has been created successfully',
+      title: 'Categoria criada',
+      description: 'Categoria cadastrada com sucesso',
     });
     
     return newCategory;
@@ -267,8 +267,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCategories(updatedCategories);
     
     toast({
-      title: 'Category updated',
-      description: 'Category has been updated successfully',
+      title: 'Categoria atualizada',
+      description: 'Categoria atualizada com sucesso',
     });
   };
 
@@ -281,8 +281,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (productsWithCategory.length > 0) {
       toast({
         variant: 'destructive',
-        title: 'Cannot delete category',
-        description: `This category is used by ${productsWithCategory.length} active products`,
+        title: 'Não é possível excluir',
+        description: `Esta categoria é usada por ${productsWithCategory.length} produtos ativos`,
       });
       return;
     }
@@ -291,8 +291,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCategories(updatedCategories);
     
     toast({
-      title: 'Category deleted',
-      description: 'Category has been deleted successfully',
+      title: 'Categoria removida',
+      description: 'Categoria removida com sucesso',
     });
   };
 

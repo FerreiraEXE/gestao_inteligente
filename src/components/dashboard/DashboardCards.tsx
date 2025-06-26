@@ -122,7 +122,7 @@ export function DashboardCards() {
       {/* Product Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Products</CardTitle>
+          <CardTitle className="text-sm font-medium">Produtos</CardTitle>
           <Package className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -207,13 +207,13 @@ export function DashboardCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            ${stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {stats.totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </div>
           <p className="text-xs text-muted-foreground">
             {stats.revenueThisMonth > 0 ? (
               <span className="flex items-center text-primary">
                 <ArrowUpRight className="mr-1 h-3 w-3" />
-                ${stats.revenueThisMonth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Este mês
+                {stats.revenueThisMonth.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} Este mês
               </span>
             ) : (
               <span className="flex items-center">
@@ -247,8 +247,8 @@ export function DashboardCards() {
                 <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--chart-1))" />
                 <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--chart-2))" />
                 <Tooltip />
-                <Bar yAxisId="left" dataKey="revenue" fill="hsl(var(--chart-1))" name="Revenue ($)" />
-                <Bar yAxisId="right" dataKey="orders" fill="hsl(var(--chart-2))" name="Orders" />
+                <Bar yAxisId="left" dataKey="revenue" fill="hsl(var(--chart-1))" name="Receita" />
+                <Bar yAxisId="right" dataKey="orders" fill="hsl(var(--chart-2))" name="Pedidos" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -278,8 +278,11 @@ export function DashboardCards() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  formatter={(value) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Value']}
+                <Tooltip
+                  formatter={(value) => [
+                    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                    'Valor'
+                  ]}
                 />
               </PieChart>
             </ResponsiveContainer>
