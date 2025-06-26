@@ -112,7 +112,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       updatedAt: new Date().toISOString(),
     };
 
-    setProducts([...products, newProduct]);
+    setProducts((prev) => [...prev, newProduct]);
     
     toast({
       title: 'Produto criado',
@@ -126,13 +126,13 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     products.find((product) => product.id === id);
 
   const updateProduct = (updatedProduct: Product): void => {
-    const updatedProducts = products.map((product) =>
-      product.id === updatedProduct.id
-        ? { ...updatedProduct, updatedAt: new Date().toISOString() }
-        : product
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === updatedProduct.id
+          ? { ...updatedProduct, updatedAt: new Date().toISOString() }
+          : product
+      )
     );
-    
-    setProducts(updatedProducts);
     
     toast({
       title: 'Produto atualizado',
@@ -141,13 +141,13 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteProduct = (id: string): void => {
-    const updatedProducts = products.map((product) =>
-      product.id === id
-        ? { ...product, isActive: false, updatedAt: new Date().toISOString() }
-        : product
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === id
+          ? { ...product, isActive: false, updatedAt: new Date().toISOString() }
+          : product
+      )
     );
-    
-    setProducts(updatedProducts);
     
     toast({
       title: 'Produto removido',
