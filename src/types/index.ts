@@ -58,6 +58,8 @@ export interface Address {
 // Supplier types
 export interface Supplier extends BaseEntity {
   name: string;
+  /** Produto fornecido pelo fornecedor */
+  product: string;
   contactName: string;
   email: string;
   phone: string;

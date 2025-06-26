@@ -9,6 +9,7 @@ const INITIAL_SUPPLIERS: Supplier[] = [
     id: 'sup_1',
     name: 'Tech Distributors Inc.',
     contactName: 'Sarah Johnson',
+    product: 'Eletrônicos',
     email: 'sjohnson@techdist.com',
     phone: '555-789-1234',
     document: '12.345.678/0001-90',
@@ -30,6 +31,7 @@ const INITIAL_SUPPLIERS: Supplier[] = [
     id: 'sup_2',
     name: 'Office Solutions Ltd.',
     contactName: 'Michael Chen',
+    product: 'Móveis para escritório',
     email: 'mchen@officesolutions.com',
     phone: '555-456-7890',
     document: '98.765.432/0001-10',
@@ -51,6 +53,7 @@ const INITIAL_SUPPLIERS: Supplier[] = [
     id: 'sup_3',
     name: 'Fashion Wholesale Co.',
     contactName: 'Emma Rodriguez',
+    product: 'Roupas',
     email: 'erodriguez@fashionwholesale.com',
     phone: '555-321-6547',
     document: '87.654.321/0001-01',
@@ -200,9 +203,10 @@ export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // By default, only show active suppliers
       if (!supplier.isActive) return false;
       
-      // Search by name, contact name, email, or document
+      // Search by name, product, contact name, email, or document
       const matchesSearch = search
         ? supplier.name.toLowerCase().includes(search.toLowerCase()) ||
+          supplier.product.toLowerCase().includes(search.toLowerCase()) ||
           supplier.contactName.toLowerCase().includes(search.toLowerCase()) ||
           supplier.email.toLowerCase().includes(search.toLowerCase()) ||
           supplier.document.includes(search)

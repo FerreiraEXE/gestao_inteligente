@@ -57,6 +57,29 @@ export default function Layout({ children }: { children: ReactNode }) {
     });
   };
 
+  const handleExportData = () => {
+    const data = {
+      products: JSON.parse(localStorage.getItem("products") || "[]"),
+      categories: JSON.parse(localStorage.getItem("categories") || "[]"),
+      clients: JSON.parse(localStorage.getItem("clients") || "[]"),
+      suppliers: JSON.parse(localStorage.getItem("suppliers") || "[]"),
+      orders: JSON.parse(localStorage.getItem("orders") || "[]"),
+      transactions: JSON.parse(localStorage.getItem("transactions") || "[]"),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "backup.json";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleResetApp = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
   const navItems: NavItem[] = [
     {
       title: "Painel",
@@ -197,6 +220,14 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <DropdownMenuItem onClick={() => navigate("/perfil")}>
                     <User className="mr-2 h-4 w-4" />
                     Perfil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportData}>
+                    <ChevronDown className="mr-2 h-4 w-4" />
+                    Exportar dados
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleResetApp}>
+                    <ChevronDown className="mr-2 h-4 w-4" />
+                    Limpar dados
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
