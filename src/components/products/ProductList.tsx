@@ -1,8 +1,22 @@
 import { useProducts } from '@/contexts/ProductContext';
 import { useSuppliers } from '@/contexts/SupplierContext';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash } from 'lucide-react';
+import { Product } from '@/types';
 
-export function ProductList() {
+interface ProductListProps {
+  onEdit: (product: Product) => void;
+  onDelete: (id: string) => void;
+}
+export function ProductList({ onEdit, onDelete }: ProductListProps) {
   const { products, categories = [] } = useProducts();
   const { suppliers } = useSuppliers();
 
@@ -18,6 +32,7 @@ export function ProductList() {
           <TableHead>Fornecedor</TableHead>
           <TableHead>Preço</TableHead>
           <TableHead>Estoque</TableHead>
+          <TableHead className="text-right">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -34,6 +49,18 @@ export function ProductList() {
                 {p.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </TableCell>
               <TableCell>{p.stockQuantity}</TableCell>
+              <TableCell className="flex justify-end gap-2">
+                <Button size="sm" variant="outline" onClick={() => onEdit(p)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onDelete(p.id)}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </TableCell>
             </TableRow>
           );
         })}
