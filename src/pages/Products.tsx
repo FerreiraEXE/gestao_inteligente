@@ -367,6 +367,20 @@ export default function Products() {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>URL da Imagem</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://exemplo.com/imagem.jpg" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="flex justify-end gap-4">
                 <Button
                   type="button"
