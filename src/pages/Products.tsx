@@ -3,9 +3,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useProducts } from "@/contexts/ProductContext";
+import { useSuppliers } from "@/contexts/SupplierContext";
+import { Product } from "@/types";
 
 import { PageHeader } from "@/components/common/PageHeader";
-import { Plus } from "lucide-react";
+import { Plus, Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const productSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -46,8 +49,11 @@ const productSchema = z.object({
 type ProductFormValues = z.infer<typeof productSchema>;
 
 export default function Products() {
-  const { categories = [], createProduct } = useProducts();
+  const { products, categories = [], createProduct, updateProduct, deleteProduct } = useProducts();
+  const { suppliers } = useSuppliers();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [search, setSearch] = useState("");
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -64,18 +70,55 @@ export default function Products() {
     },
   });
 
+  const openNew = () => {
+    setEditingProduct(null);
+    form.reset({
+      name: "",
+      description: "",
+      sku: "",
+      price: 0,
+      cost: 0,
+      stockQuantity: 0,
+      categoryId: "",
+      supplierId: "",
+      imageUrl: "",
+    });
+    setIsDialogOpen(true);
+  };
+
+  const openEdit = (product: Product) => {
+    setEditingProduct(product);
+    form.reset({
+      name: product.name,
+      description: product.description,
+      sku: product.sku,
+      price: product.price,
+      cost: product.cost,
+      stockQuantity: product.stockQuantity,
+      categoryId: product.categoryId,
+      supplierId: product.supplierId,
+      imageUrl: product.imageUrl,
+    });
+    setIsDialogOpen(true);
+  };
+
   const onSubmit = async (data: ProductFormValues) => {
     try {
-      await createProduct({
-        ...data,
-        imageUrl: data.imageUrl ?? "",
-        isActive: true,
-      });
-      
+      if (editingProduct) {
+        updateProduct({ ...editingProduct, ...data });
+      } else {
+        await createProduct({
+          ...data,
+          imageUrl: data.imageUrl ?? "",
+          isActive: true,
+        });
+      }
+
       setIsDialogOpen(false);
+      setEditingProduct(null);
       form.reset();
     } catch (error) {
-      console.error("Erro ao criar produto:", error);
+      console.error("Erro ao salvar produto:", error);
     }
   };
 
@@ -86,15 +129,73 @@ export default function Products() {
         description="Gerencie seu catálogo de produtos"
         action={{
           label: "Novo Produto",
-          onClick: () => setIsDialogOpen(true),
+          onClick: openNew,
           icon: <Plus className="h-4 w-4" />,
         }}
-      />
+      >
+        <div className="pt-2">
+          <Input
+            placeholder="Buscar produto..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-sm"
+          />
+        </div>
+      </PageHeader>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nome</TableHead>
+            <TableHead>Categoria</TableHead>
+            <TableHead>Quantidade</TableHead>
+            <TableHead>Preço</TableHead>
+            <TableHead>Fornecedor</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {products
+            .filter((p) =>
+              p.isActive &&
+              (p.name.toLowerCase().includes(search.toLowerCase()) ||
+                p.sku.toLowerCase().includes(search.toLowerCase()))
+            )
+            .map((p) => {
+              const category = categories.find((c) => c.id === p.categoryId);
+              const supplier = suppliers.find((s) => s.id === p.supplierId);
+              return (
+                <TableRow key={p.id}>
+                  <TableCell>{p.name}</TableCell>
+                  <TableCell>{category?.name || 'N/A'}</TableCell>
+                  <TableCell>{p.stockQuantity}</TableCell>
+                  <TableCell>
+                    {p.price.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </TableCell>
+                  <TableCell>{supplier?.name || 'N/A'}</TableCell>
+                  <TableCell className="flex justify-end gap-2">
+                    <Button size="sm" variant="outline" onClick={() => openEdit(p)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => deleteProduct(p.id)}>
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+        </TableBody>
+      </Table>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Novo Produto</DialogTitle>
+            <DialogTitle>
+              {editingProduct ? "Editar Produto" : "Novo Produto"}
+            </DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -231,6 +332,33 @@ export default function Products() {
                             {category.name}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="supplierId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fornecedor</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um fornecedor" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {suppliers
+                          .filter((s) => s.isActive)
+                          .map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
+                              {s.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

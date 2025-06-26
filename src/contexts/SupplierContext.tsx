@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { Supplier, SearchParams, PaginatedResponse } from '@/types';
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { useProducts } from './ProductContext';
 import { toast } from '@/hooks/use-toast';
 
 // Initial suppliers
@@ -87,6 +88,7 @@ const SupplierContext = createContext<SupplierContextType | undefined>(undefined
 
 export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [suppliers, setSuppliers] = useLocalStorage<Supplier[]>('suppliers', INITIAL_SUPPLIERS);
+  const { products, updateProduct } = useProducts();
 
   // Supplier CRUD functions
   const createSupplier = (supplierData: Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>): Supplier => {
@@ -186,9 +188,21 @@ export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         ? { ...supplier, isActive: false, updatedAt: new Date().toISOString() }
         : supplier
     );
-    
+
     setSuppliers(updatedSuppliers);
-    
+
+    // Remove supplier reference from products
+    const affected = products.filter((p) => p.supplierId === id && p.isActive);
+    if (affected.length > 0) {
+      affected.forEach((p) => {
+        updateProduct({ ...p, supplierId: '' });
+      });
+      toast({
+        title: 'Produtos atualizados',
+        description: `Fornecedor removido de ${affected.length} produtos`,
+      });
+    }
+
     toast({
       title: 'Supplier deactivated',
       description: 'Supplier has been deactivated successfully',
