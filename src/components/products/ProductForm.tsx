@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Product } from '@/types';
 
 const schema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
@@ -26,31 +27,42 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function ProductForm() {
-  const { categories = [], createProduct } = useProducts();
+interface ProductFormProps {
+  product?: Product;
+  onCancel?: () => void;
+  onSuccess?: () => void;
+}
+
+export function ProductForm({ product, onCancel, onSuccess }: ProductFormProps) {
+  const { categories = [], createProduct, updateProduct } = useProducts();
   const { suppliers } = useSuppliers();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
-      sku: '',
-      price: 0,
-      stockQuantity: 0,
-      categoryId: '',
-      supplierId: '',
+      name: product?.name ?? '',
+      sku: product?.sku ?? '',
+      price: product?.price ?? 0,
+      stockQuantity: product?.stockQuantity ?? 0,
+      categoryId: product?.categoryId ?? '',
+      supplierId: product?.supplierId ?? '',
     },
   });
 
   const onSubmit = async (data: FormValues) => {
-    await createProduct({
-      ...data,
-      description: '',
-      cost: 0,
-      imageUrl: '',
-      isActive: true,
-    });
-    form.reset();
+    if (product) {
+      updateProduct({ ...product, ...data });
+    } else {
+      await createProduct({
+        ...data,
+        description: '',
+        cost: 0,
+        imageUrl: '',
+        isActive: true,
+      });
+      form.reset();
+    }
+    onSuccess?.();
   };
 
   return (
@@ -177,7 +189,12 @@ export function ProductForm() {
           )}
         />
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancelar
+            </Button>
+          )}
           <Button type="submit">Salvar</Button>
         </div>
       </form>
