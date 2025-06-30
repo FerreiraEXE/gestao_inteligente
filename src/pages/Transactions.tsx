@@ -35,7 +35,6 @@ const transSchema = z.object({
   amount: z.number().min(0.01, "Valor deve ser positivo"),
   description: z.string().min(1, "Descrição obrigatória"),
   date: z.string(),
-  category: z.string().min(1, "Categoria obrigatória"),
 });
 
 type TransFormValues = z.infer<typeof transSchema>;
@@ -51,7 +50,6 @@ export default function Transactions() {
       amount: 0,
       description: "",
       date: new Date().toISOString().substring(0, 10),
-      category: "other",
     },
   });
 
@@ -154,19 +152,6 @@ export default function Transactions() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Categoria</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <div className="flex justify-end gap-4">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>

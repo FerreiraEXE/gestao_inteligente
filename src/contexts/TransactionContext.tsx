@@ -11,7 +11,6 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
     amount: 1429.99,
     description: 'Payment for order ORD-001',
     date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
-    category: 'sale',
     orderId: 'order_1',
     userId: '1',
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -23,7 +22,6 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
     amount: 1237.45,
     description: 'Payment for order ORD-002',
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-    category: 'sale',
     orderId: 'order_2',
     userId: '1',
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
@@ -35,7 +33,6 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
     amount: 2500,
     description: 'Supplier payment',
     date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
-    category: 'purchase',
     supplierId: 'sup_1',
     userId: '1',
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -47,7 +44,6 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
     amount: 1200,
     description: 'Monthly rent',
     date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-    category: 'rent',
     userId: '1',
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -152,9 +148,6 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
         ? transaction.type === filters.type
         : true;
       
-      const matchesCategory = filters.category
-        ? transaction.category === filters.category
-        : true;
       
       const matchesStartDate = filters.startDate
         ? new Date(transaction.date) >= new Date(filters.startDate)
@@ -175,7 +168,6 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
       return (
         matchesSearch &&
         matchesType &&
-        matchesCategory &&
         matchesStartDate &&
         matchesEndDate &&
         matchesOrderId &&
@@ -224,7 +216,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   // Generate financial report
   const generateFinancialReport = (filter: ReportFilter): FinancialReport[] => {
-    const { startDate, endDate, category, type } = filter;
+    const { startDate, endDate, type } = filter;
     
     // Filter transactions based on provided filters
     const filteredTransactions = transactions.filter((transaction) => {
@@ -236,15 +228,12 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
         ? new Date(transaction.date) <= new Date(endDate)
         : true;
       
-      const matchesCategory = category
-        ? transaction.category === category
-        : true;
       
       const matchesType = type
         ? transaction.type === type
         : true;
       
-      return matchesStartDate && matchesEndDate && matchesCategory && matchesType;
+      return matchesStartDate && matchesEndDate && matchesType;
     });
     
     // Sort transactions by date (oldest first)
@@ -267,7 +256,6 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
         transactionId: transaction.id,
         date: transaction.date,
         type: transaction.type,
-        category: transaction.category,
         description: transaction.description,
         amount: transaction.amount,
         balance: runningBalance,

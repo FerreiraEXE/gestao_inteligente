@@ -99,7 +99,6 @@ export interface Transaction extends BaseEntity {
   amount: number;
   description: string;
   date: string;
-  category: 'sale' | 'purchase' | 'refund' | 'salary' | 'rent' | 'utilities' | 'other';
   orderId?: string;
   supplierId?: string;
   userId: string;
@@ -109,7 +108,6 @@ export interface Transaction extends BaseEntity {
 export interface ReportFilter {
   startDate?: string;
   endDate?: string;
-  category?: string;
   type?: 'income' | 'expense';
   clientId?: string;
   supplierId?: string;
@@ -139,7 +137,6 @@ export interface FinancialReport {
   transactionId: string;
   date: string;
   type: 'income' | 'expense';
-  category: string;
   description: string;
   amount: number;
   balance: number;
