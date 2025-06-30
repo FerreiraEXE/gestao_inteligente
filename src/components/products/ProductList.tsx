@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useProducts } from '@/contexts/ProductContext';
 import { useSuppliers } from '@/contexts/SupplierContext';
 import {
@@ -34,16 +34,27 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
   const [supplierId, setSupplierId] = useState('');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
-  const active = products.filter((p) => p.isActive);
+  const active = useMemo(
+    () => products.filter((p) => p.isActive),
+    [products]
+  );
 
-  const filtered = active.filter((p) => {
-    const matchName = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchSupplier = supplierId ? p.supplierId === supplierId : true;
-    return matchName && matchSupplier;
-  });
+  const filtered = useMemo(() => {
+    return active.filter((p) => {
+      const matchName = p.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchSupplier = supplierId ? p.supplierId === supplierId : true;
+      return matchName && matchSupplier;
+    });
+  }, [active, search, supplierId]);
 
-  const sorted = [...filtered].sort((a, b) =>
-    order === 'asc' ? a.price - b.price : b.price - a.price
+  const sorted = useMemo(
+    () =>
+      [...filtered].sort((a, b) =>
+        order === 'asc' ? a.price - b.price : b.price - a.price
+      ),
+    [filtered, order]
   );
 
   if (sorted.length === 0) {
