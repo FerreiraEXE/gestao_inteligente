@@ -32,11 +32,15 @@ export default function Reports() {
 
   const [finStart, setFinStart] = useState('');
   const [finEnd, setFinEnd] = useState('');
-  const [finType, setFinType] = useState('');
+  const [finType, setFinType] = useState<'income' | 'expense' | ''>('');
 
   const stockData = generateStockReport();
   const salesData = generateSalesReport({ startDate: salesStart, endDate: salesEnd });
-  const financialData = generateFinancialReport({ startDate: finStart, endDate: finEnd, type: finType as any });
+  const financialData = generateFinancialReport({
+    startDate: finStart,
+    endDate: finEnd,
+    type: finType || undefined,
+  });
 
   return (
     <div className="space-y-6">
