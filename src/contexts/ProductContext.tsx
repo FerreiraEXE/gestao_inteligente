@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { Product, Category, SearchParams, PaginatedResponse } from '@/types';
+import searchArray from '@/lib/search';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
 
@@ -156,83 +157,59 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const searchProducts = (params: SearchParams): PaginatedResponse<Product> => {
-    const { page = 1, limit = 10, search = '', sort = 'name', order = 'asc', filters = {} } = params;
-    
-    // Filter products based on search term and filters
-    let filteredProducts = products.filter((product) => {
-      // By default, only show active products
-      if (!product.isActive) return false;
-      
-      // Search by name, description, or SKU
-      const matchesSearch = search
-        ? product.name.toLowerCase().includes(search.toLowerCase()) ||
-          product.description.toLowerCase().includes(search.toLowerCase()) ||
-          product.sku.toLowerCase().includes(search.toLowerCase())
-        : true;
-      
-      // Apply additional filters
-      const matchesCategory = filters.categoryId
-        ? product.categoryId === filters.categoryId
-        : true;
-      
-      const matchesSupplier = filters.supplierId
-        ? product.supplierId === filters.supplierId
-        : true;
-      
-      const matchesPriceMin = filters.priceMin
-        ? product.price >= filters.priceMin
-        : true;
-      
-      const matchesPriceMax = filters.priceMax
-        ? product.price <= filters.priceMax
-        : true;
-      
-      const matchesStock = filters.inStock
-        ? product.stockQuantity > 0
-        : true;
-      
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesSupplier &&
-        matchesPriceMin &&
-        matchesPriceMax &&
-        matchesStock
-      );
-    });
-    
-    // Sort products
-    filteredProducts.sort((a, b) => {
-      let compareA: any = a[sort as keyof Product];
-      let compareB: any = b[sort as keyof Product];
-      
-      // Handle string comparison
-      if (typeof compareA === 'string' && typeof compareB === 'string') {
-        compareA = compareA.toLowerCase();
-        compareB = compareB.toLowerCase();
-      }
-      
-      if (order === 'asc') {
-        return compareA > compareB ? 1 : -1;
-      } else {
-        return compareA < compareB ? 1 : -1;
-      }
-    });
-    
-    // Calculate pagination
-    const totalItems = filteredProducts.length;
-    const totalPages = Math.ceil(totalItems / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
-    
-    return {
-      data: paginatedProducts,
-      total: totalItems,
-      page,
-      limit,
-      totalPages,
-    };
+    const { search = '', filters = {} } = params;
+
+    const sortableFields = [
+      'name',
+      'price',
+      'stockQuantity',
+      'createdAt',
+      'updatedAt',
+      'sku',
+      'cost',
+    ];
+
+    return searchArray(
+      products,
+      params,
+      (product) => {
+        if (!product.isActive) return false;
+
+        const matchesSearch = search
+          ? product.name.toLowerCase().includes(search.toLowerCase()) ||
+            product.description.toLowerCase().includes(search.toLowerCase()) ||
+            product.sku.toLowerCase().includes(search.toLowerCase())
+          : true;
+
+        const matchesCategory = filters.categoryId
+          ? product.categoryId === filters.categoryId
+          : true;
+
+        const matchesSupplier = filters.supplierId
+          ? product.supplierId === filters.supplierId
+          : true;
+
+        const matchesPriceMin = filters.priceMin
+          ? product.price >= filters.priceMin
+          : true;
+
+        const matchesPriceMax = filters.priceMax
+          ? product.price <= filters.priceMax
+          : true;
+
+        const matchesStock = filters.inStock ? product.stockQuantity > 0 : true;
+
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesSupplier &&
+          matchesPriceMin &&
+          matchesPriceMax &&
+          matchesStock
+        );
+      },
+      sortableFields
+    );
   };
 
   // Category CRUD functions

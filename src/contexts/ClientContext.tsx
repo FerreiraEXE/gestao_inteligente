@@ -2,6 +2,7 @@ import React, { createContext, useContext } from 'react';
 import { Client, SearchParams, PaginatedResponse } from '@/types';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
+import searchArray from '@/lib/search';
 
 // Initial clients
 const INITIAL_CLIENTS: Client[] = [
@@ -172,86 +173,51 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const searchClients = (params: SearchParams): PaginatedResponse<Client> => {
-    const { page = 1, limit = 10, search = '', sort = 'name', order = 'asc', filters = {} } = params;
-    
-    // Filter clients based on search term and filters
-    let filteredClients = clients.filter((client) => {
-      // By default, only show active clients
-      if (!client.isActive) return false;
-      
-      // Search by name, email, or document
-      const matchesSearch = search
-        ? client.name.toLowerCase().includes(search.toLowerCase()) ||
-          client.email.toLowerCase().includes(search.toLowerCase()) ||
-          client.document.includes(search)
-        : true;
-      
-      // Apply additional filters
-      const matchesDocumentType = filters.documentType
-        ? client.documentType === filters.documentType
-        : true;
-      
-      const matchesCity = filters.city
-        ? client.address.city.toLowerCase().includes(filters.city.toLowerCase())
-        : true;
-      
-      const matchesState = filters.state
-        ? client.address.state.toLowerCase() === filters.state.toLowerCase()
-        : true;
-      
-      return (
-        matchesSearch &&
-        matchesDocumentType &&
-        matchesCity &&
-        matchesState
-      );
-    });
-    
-    // Sort clients
-    filteredClients.sort((a, b) => {
-      // Handle nested properties
-      if (sort.includes('.')) {
-        const [parentProp, childProp] = sort.split('.');
-        const compareA = (a[parentProp as keyof Client] as any)[childProp].toLowerCase();
-        const compareB = (b[parentProp as keyof Client] as any)[childProp].toLowerCase();
-        
-        if (order === 'asc') {
-          return compareA > compareB ? 1 : -1;
-        } else {
-          return compareA < compareB ? 1 : -1;
-        }
-      } else {
-        let compareA: any = a[sort as keyof Client];
-        let compareB: any = b[sort as keyof Client];
-        
-        // Handle string comparison
-        if (typeof compareA === 'string' && typeof compareB === 'string') {
-          compareA = compareA.toLowerCase();
-          compareB = compareB.toLowerCase();
-        }
-        
-        if (order === 'asc') {
-          return compareA > compareB ? 1 : -1;
-        } else {
-          return compareA < compareB ? 1 : -1;
-        }
-      }
-    });
-    
-    // Calculate pagination
-    const totalItems = filteredClients.length;
-    const totalPages = Math.ceil(totalItems / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedClients = filteredClients.slice(startIndex, endIndex);
-    
-    return {
-      data: paginatedClients,
-      total: totalItems,
-      page,
-      limit,
-      totalPages,
-    };
+    const { search = '', filters = {} } = params;
+
+    const sortableFields = [
+      'name',
+      'email',
+      'document',
+      'address.city',
+      'address.state',
+      'createdAt',
+      'updatedAt',
+    ];
+
+    return searchArray(
+      clients,
+      params,
+      (client) => {
+        if (!client.isActive) return false;
+
+        const matchesSearch = search
+          ? client.name.toLowerCase().includes(search.toLowerCase()) ||
+            client.email.toLowerCase().includes(search.toLowerCase()) ||
+            client.document.includes(search)
+          : true;
+
+        const matchesDocumentType = filters.documentType
+          ? client.documentType === filters.documentType
+          : true;
+
+        const matchesCity = filters.city
+          ? client.address.city.toLowerCase().includes(filters.city.toLowerCase())
+          : true;
+
+        const matchesState = filters.state
+          ? client.address.state.toLowerCase() === filters.state.toLowerCase()
+          : true;
+
+        return (
+          matchesSearch &&
+          matchesDocumentType &&
+          matchesCity &&
+          matchesState
+        );
+      },
+      sortableFields
+    );
   };
 
   // Document validation function - simplified for demo purposes
