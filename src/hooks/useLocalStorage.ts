@@ -13,6 +13,14 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val
       return item ? (JSON.parse(item) as T) : initialValue;
     } catch (error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
+      try {
+        window.localStorage.removeItem(key);
+      } catch (removeError) {
+        console.warn(
+          `Error removing localStorage key "${key}":`,
+          removeError
+        );
+      }
       return initialValue;
     }
   };
