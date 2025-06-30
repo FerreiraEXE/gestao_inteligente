@@ -18,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash, Plus } from 'lucide-react';
+import { EmptyState } from '@/components/common/EmptyState';
 import { Product } from '@/types';
 
 interface ProductListProps {
@@ -44,6 +45,20 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
   const sorted = [...filtered].sort((a, b) =>
     order === 'asc' ? a.price - b.price : b.price - a.price
   );
+
+  if (sorted.length === 0) {
+    return (
+      <EmptyState
+        title="Nenhum produto ativo encontrado"
+        description="Cadastre um novo produto para começar"
+        action={{
+          label: 'Criar Produto',
+          onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+        }}
+        className="mt-4"
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">
