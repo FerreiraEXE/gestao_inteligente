@@ -68,10 +68,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       } catch (error) {
         console.error('Failed to parse stored user', error);
-        setAuthState({ ...authState, isLoading: false });
+        setAuthState(prev => ({ ...prev, isLoading: false }));
       }
     } else {
-      setAuthState({ ...authState, isLoading: false });
+      setAuthState(prev => ({ ...prev, isLoading: false }));
     }
   }, []);
 
