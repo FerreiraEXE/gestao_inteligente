@@ -1,90 +1,98 @@
-🧾 Inventory Management System
-Este repositório implementa um sistema de gestão de inventário 100% front-end.
-O projeto, descrito como "inventory-management-system" no package.json, foi desenvolvido com:
 
-React + Vite
+---
 
-TypeScript
+# 🧾 Inventory Management System
 
-Tailwind CSS
+Este repositório implementa um **sistema de gestão de inventário 100% front-end**.
+O projeto, descrito como `"inventory-management-system"` no `package.json`, foi desenvolvido com:
 
-🏗️ Estrutura Geral
-🧠 Contextos de Dados
-A aplicação utiliza Context API para gerenciar o estado de todas as entidades:
+* **React** + **Vite**
+* **TypeScript**
+* **Tailwind CSS**
 
-Usuários (AuthContext)
+---
 
-Produtos e categorias (ProductContext)
+## 🏗️ Estrutura Geral
 
-Clientes
+### 🧠 Contextos de Dados
 
-Fornecedores
+A aplicação utiliza **Context API** para gerenciar o estado de todas as entidades:
 
-Pedidos
+* Usuários (`AuthContext`)
+* Produtos e categorias (`ProductContext`)
+* Clientes
+* Fornecedores
+* Pedidos
+* Transações
 
-Transações
+📦 Todos os dados são **persistidos no `LocalStorage`** via o hook personalizado `useLocalStorage`.
 
-📦 Todos os dados são persistidos no LocalStorage via o hook personalizado useLocalStorage.
+#### Exemplo:
 
-Exemplo:
-AuthContext: Define usuários iniciais e gerencia login/logout com persistência local.
+* `AuthContext`: Define usuários iniciais e gerencia login/logout com persistência local.
+* `ProductContext`: Gerencia produtos e categorias com funções **CRUD**, busca e geração de **relatórios de estoque**.
 
-ProductContext: Gerencia produtos e categorias com funções CRUD, busca e geração de relatórios de estoque.
+---
 
-🧭 Navegação e Rotas
-O roteamento principal é definido em App.tsx, com uso do <Router>:
+## 🧭 Navegação e Rotas
 
-Cada rota é protegida por ProtectedRoute, que verifica autenticação antes de renderizar as páginas:
+O roteamento principal é definido em `App.tsx`, com uso do `<Router>`:
 
-Dashboard
+* Cada rota é protegida por `ProtectedRoute`, que **verifica autenticação** antes de renderizar as páginas:
 
-Produtos
+  * Dashboard
+  * Produtos
+  * Clientes
+  * Etc.
 
-Clientes
+---
 
-Etc.
+## 🔧 Utilidades
 
-🔧 Utilidades
-src/lib/search.ts → searchArray: Filtragem, ordenação e paginação para buscas.
+* `src/lib/search.ts` → `searchArray`: Filtragem, ordenação e paginação para buscas.
+* `src/lib/order.ts` → Funções para:
 
-src/lib/order.ts → Funções para:
+  * Cálculo do **total de pedidos**
+  * Geração de **números de pedido sequenciais**
 
-Cálculo do total de pedidos
+---
 
-Geração de números de pedido sequenciais
+## 📄 Páginas e Componentes
 
-📄 Páginas e Componentes
-Cada página (src/pages/Products.tsx, por exemplo) usa seu respectivo contexto.
+Cada página (`src/pages/Products.tsx`, por exemplo) usa seu respectivo contexto.
 
-✨ A interface é construída com componentes reutilizáveis em src/components/ui/.
+✨ A interface é construída com **componentes reutilizáveis** em `src/components/ui/`.
 
-🔁 Fluxo Típico
-Login
+---
 
-Realizado via AuthContext
+## 🔁 Fluxo Típico
 
-Token e usuário são salvos no LocalStorage
+1. **Login**
 
-Acesso liberado às rotas protegidas
+   * Realizado via `AuthContext`
+   * Token e usuário são salvos no `LocalStorage`
+   * Acesso liberado às rotas protegidas
 
-Cadastro e Listagem
+2. **Cadastro e Listagem**
 
-Manipulação de entidades como produtos, clientes e fornecedores
+   * Manipulação de entidades como produtos, clientes e fornecedores
+   * Utiliza formulários e listagens
+   * **Todos os dados são salvos localmente**, sem backend
 
-Utiliza formulários e listagens
+3. **Relatórios**
 
-Todos os dados são salvos localmente, sem backend
+   * Funções nos contextos geram relatórios de:
 
-Relatórios
+     * Estoque
+     * Vendas
+     * Finanças
 
-Funções nos contextos geram relatórios de:
+---
 
-Estoque
+## ✅ Resumo
 
-Vendas
+> Este projeto é uma **SPA (Single Page Application)** para gerenciamento de inventário.
+> Toda a lógica de dados ocorre no **client-side**, utilizando `Context API`, `LocalStorage` e hooks personalizados para persistência de informações.
 
-Finanças
+---
 
-✅ Resumo
-Este projeto é uma SPA (Single Page Application) para gerenciamento de inventário.
-Toda a lógica de dados ocorre no client-side, utilizando Context API, LocalStorage e hooks personalizados para persistência de informações.
