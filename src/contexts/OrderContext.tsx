@@ -3,6 +3,11 @@ import { Order, OrderItem, SearchParams, PaginatedResponse } from '@/types';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
 import { useProducts } from './ProductContext';
+import searchArray from '@/lib/search';
+import {
+  calculateOrderTotal as calculateOrderTotalLib,
+  generateOrderNumber as generateOrderNumberLib,
+} from '@/lib/order';
 
 // Initial orders
 const INITIAL_ORDERS: Order[] = [
@@ -215,120 +220,74 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const searchOrders = (params: SearchParams): PaginatedResponse<Order> => {
-    const { page = 1, limit = 10, search = '', sort = 'createdAt', order = 'desc', filters = {} } = params;
-    
-    // Filter orders based on search term and filters
-    let filteredOrders = orders.filter((order) => {
-      // Search by order number
-      const matchesSearch = search
-        ? order.orderNumber.toLowerCase().includes(search.toLowerCase())
-        : true;
-      
-      // Apply additional filters
-      const matchesClient = filters.clientId
-        ? order.clientId === filters.clientId
-        : true;
-      
-      const matchesStatus = filters.status
-        ? order.status === filters.status
-        : true;
-      
-      const matchesPaymentStatus = filters.paymentStatus
-        ? order.paymentStatus === filters.paymentStatus
-        : true;
-      
-      const matchesPaymentMethod = filters.paymentMethod
-        ? order.paymentMethod === filters.paymentMethod
-        : true;
-      
-      const matchesStartDate = filters.startDate
-        ? new Date(order.createdAt) >= new Date(filters.startDate)
-        : true;
-      
-      const matchesEndDate = filters.endDate
-        ? new Date(order.createdAt) <= new Date(filters.endDate)
-        : true;
-      
-      return (
-        matchesSearch &&
-        matchesClient &&
-        matchesStatus &&
-        matchesPaymentStatus &&
-        matchesPaymentMethod &&
-        matchesStartDate &&
-        matchesEndDate
-      );
-    });
-    
-    // Sort orders
-    filteredOrders.sort((a, b) => {
-      let compareA: any = a[sort as keyof Order];
-      let compareB: any = b[sort as keyof Order];
-      
-      // Handle date comparison
-      if (sort === 'createdAt' || sort === 'updatedAt') {
-        compareA = new Date(compareA);
-        compareB = new Date(compareB);
-      }
-      // Handle string comparison
-      else if (typeof compareA === 'string' && typeof compareB === 'string') {
-        compareA = compareA.toLowerCase();
-        compareB = compareB.toLowerCase();
-      }
-      
-      if (order === 'asc') {
-        return compareA > compareB ? 1 : -1;
-      } else {
-        return compareA < compareB ? 1 : -1;
-      }
-    });
-    
-    // Calculate pagination
-    const totalItems = filteredOrders.length;
-    const totalPages = Math.ceil(totalItems / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
-    
-    return {
-      data: paginatedOrders,
-      total: totalItems,
-      page,
-      limit,
-      totalPages,
-    };
+    const { search = '', filters = {} } = params;
+
+    const sortableFields = [
+      'orderNumber',
+      'status',
+      'paymentStatus',
+      'paymentMethod',
+      'createdAt',
+      'updatedAt',
+      'total',
+    ];
+
+    return searchArray(
+      orders,
+      params,
+      (order) => {
+        const matchesSearch = search
+          ? order.orderNumber.toLowerCase().includes(search.toLowerCase())
+          : true;
+
+        const matchesClient = filters.clientId
+          ? order.clientId === filters.clientId
+          : true;
+
+        const matchesStatus = filters.status
+          ? order.status === filters.status
+          : true;
+
+        const matchesPaymentStatus = filters.paymentStatus
+          ? order.paymentStatus === filters.paymentStatus
+          : true;
+
+        const matchesPaymentMethod = filters.paymentMethod
+          ? order.paymentMethod === filters.paymentMethod
+          : true;
+
+        const matchesStartDate = filters.startDate
+          ? new Date(order.createdAt) >= new Date(filters.startDate)
+          : true;
+
+        const matchesEndDate = filters.endDate
+          ? new Date(order.createdAt) <= new Date(filters.endDate)
+          : true;
+
+        return (
+          matchesSearch &&
+          matchesClient &&
+          matchesStatus &&
+          matchesPaymentStatus &&
+          matchesPaymentMethod &&
+          matchesStartDate &&
+          matchesEndDate
+        );
+      },
+      sortableFields
+    );
   };
 
-  // Calculate order total
+  // Calculate order total using shared utility
   const calculateOrderTotal = (
-    items: OrderItem[], 
-    discount: number, 
-    tax: number, 
+    items: OrderItem[],
+    discount: number,
+    tax: number,
     shipping: number
-  ): number => {
-    // Calculate sum of all items
-    const subtotal = items.reduce((sum, item) => sum + item.total, 0);
-    
-    // Calculate final total
-    return subtotal - discount + tax + shipping;
-  };
+  ): number => calculateOrderTotalLib(items, discount, tax, shipping);
 
-  // Generate a unique order number
-  const generateOrderNumber = (): string => {
-    const prefix = 'ORD';
-    const latestOrder = [...orders].sort((a, b) => {
-      return b.orderNumber.localeCompare(a.orderNumber);
-    })[0];
-    
-    if (!latestOrder) {
-      return `${prefix}-001`;
-    }
-    
-    const latestNumber = parseInt(latestOrder.orderNumber.split('-')[1], 10);
-    const nextNumber = (latestNumber + 1).toString().padStart(3, '0');
-    
-    return `${prefix}-${nextNumber}`;
-  };
+  // Generate a unique order number based on existing orders
+  const generateOrderNumber = (): string => generateOrderNumberLib(orders);
 
   const value = {
     orders,
