@@ -132,7 +132,7 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
               </TableCell>
             </TableRow>
           );
-        })
+        })}
         </TableBody>
       </Table>
     </div>
