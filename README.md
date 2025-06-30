@@ -1,7 +1,7 @@
 
 ---
 
-# 🧾 Inventory Management System
+# 🧾 Gestão inteligente
 
 Este repositório implementa um **sistema de gestão de inventário 100% front-end**.
 O projeto, descrito como `"inventory-management-system"` no `package.json`, foi desenvolvido com:
