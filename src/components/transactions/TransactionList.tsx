@@ -29,7 +29,6 @@ export default function TransactionList() {
       : "";
     return (
       t.description.toLowerCase().includes(term) ||
-      t.category.toLowerCase().includes(term) ||
       orderNumber.includes(term) ||
       supplierName.includes(term)
     );
@@ -50,7 +49,6 @@ export default function TransactionList() {
             <TableHead>Descrição</TableHead>
             <TableHead>Valor</TableHead>
             <TableHead>Tipo</TableHead>
-            <TableHead>Categoria</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,7 +63,6 @@ export default function TransactionList() {
                 })}
               </TableCell>
               <TableCell>{t.type === "income" ? "Entrada" : "Saída"}</TableCell>
-              <TableCell>{t.category}</TableCell>
             </TableRow>
           ))}
         </TableBody>
