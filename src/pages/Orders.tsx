@@ -7,6 +7,7 @@ import { useClients } from "@/contexts/ClientContext";
 import { useProducts } from "@/contexts/ProductContext";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Plus } from "lucide-react";
+import OrderList from "@/components/orders/OrderList";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -93,6 +94,8 @@ export default function Orders() {
           icon: <Plus className="h-4 w-4" />,
         }}
       />
+
+      <OrderList />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
