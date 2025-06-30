@@ -92,6 +92,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       icon: <Package className="h-5 w-5" />,
     },
     {
+      title: "Categorias",
+      href: "/categorias",
+      icon: <Package className="h-5 w-5" />,
+    },
+    {
       title: "Clientes",
       href: "/clientes",
       icon: <Users className="h-5 w-5" />,
