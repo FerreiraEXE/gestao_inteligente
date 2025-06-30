@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { Product, Category, SearchParams, PaginatedResponse } from '@/types';
+import { Product, Category, SearchParams, PaginatedResponse, StockReport } from '@/types';
 import searchArray from '@/lib/search';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
@@ -93,9 +93,12 @@ interface ProductContextType {
   getCategoryById: (id: string) => Category | undefined;
   updateCategory: (category: Category) => void;
   deleteCategory: (id: string) => void;
-  
+
   // Image handling
   uploadProductImage: (file: File) => Promise<string>;
+
+  // Reporting
+  generateStockReport: () => StockReport[];
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -298,6 +301,19 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   };
 
+  // Generate stock report
+  const generateStockReport = (): StockReport[] =>
+    products
+      .filter((p) => p.isActive)
+      .map((p) => ({
+        productId: p.id,
+        name: p.name,
+        sku: p.sku,
+        currentStock: p.stockQuantity,
+        averageCost: p.cost,
+        totalValue: p.stockQuantity * p.cost,
+      }));
+
   const value = {
     products,
     createProduct,
@@ -311,8 +327,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     getCategoryById,
     updateCategory,
     deleteCategory,
-    
+
     uploadProductImage,
+    generateStockReport,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

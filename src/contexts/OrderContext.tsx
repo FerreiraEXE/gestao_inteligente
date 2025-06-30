@@ -1,8 +1,16 @@
 import React, { createContext, useContext } from 'react';
-import { Order, OrderItem, SearchParams, PaginatedResponse } from '@/types';
+import {
+  Order,
+  OrderItem,
+  SearchParams,
+  PaginatedResponse,
+  SalesReport,
+  ReportFilter,
+} from '@/types';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
 import { useProducts } from './ProductContext';
+import { useClients } from './ClientContext';
 import searchArray from '@/lib/search';
 import {
   calculateOrderTotal as calculateOrderTotalLib,
@@ -74,6 +82,7 @@ interface OrderContextType {
   searchOrders: (params: SearchParams) => PaginatedResponse<Order>;
   calculateOrderTotal: (items: OrderItem[], discount: number, tax: number, shipping: number) => number;
   generateOrderNumber: () => string;
+  generateSalesReport: (filter: ReportFilter) => SalesReport[];
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -81,6 +90,7 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orders, setOrders] = useLocalStorage<Order[]>('orders', INITIAL_ORDERS);
   const { products, updateProduct } = useProducts();
+  const { clients } = useClients();
 
   // Order CRUD functions
   const createOrder = (orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>): Order => {
@@ -278,6 +288,31 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
   };
 
+  // Generate sales report
+  const generateSalesReport = (filter: ReportFilter): SalesReport[] => {
+    const { startDate, endDate } = filter;
+
+    return orders
+      .filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        const matchesStart = startDate ? orderDate >= new Date(startDate) : true;
+        const matchesEnd = endDate ? orderDate <= new Date(endDate) : true;
+        return matchesStart && matchesEnd;
+      })
+      .map((order) => {
+        const client = clients.find((c) => c.id === order.clientId);
+        return {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          clientName: client ? client.name : 'N/A',
+          date: order.createdAt,
+          total: order.total,
+          status: order.status,
+          paymentStatus: order.paymentStatus,
+        } as SalesReport;
+      });
+  };
+
   // Calculate order total using shared utility
   const calculateOrderTotal = (
     items: OrderItem[],
@@ -298,6 +333,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     searchOrders,
     calculateOrderTotal,
     generateOrderNumber,
+    generateSalesReport,
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
