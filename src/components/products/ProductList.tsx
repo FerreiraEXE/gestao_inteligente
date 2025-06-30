@@ -80,12 +80,15 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
         />
-        <Select value={supplierId} onValueChange={setSupplierId}>
+        <Select
+          value={supplierId || 'all'}
+          onValueChange={(v) => setSupplierId(v === 'all' ? '' : v)}
+        >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Fornecedor" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
             {suppliers.map((s) => (
               <SelectItem key={s.id} value={s.id}>
                 {s.name}

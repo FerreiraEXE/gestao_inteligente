@@ -124,12 +124,15 @@ export default function Reports() {
           <div className="flex flex-wrap gap-4 pb-4">
             <Input type="date" value={finStart} onChange={(e) => setFinStart(e.target.value)} />
             <Input type="date" value={finEnd} onChange={(e) => setFinEnd(e.target.value)} />
-            <Select value={finType} onValueChange={setFinType}>
+            <Select
+              value={finType || 'all'}
+              onValueChange={(v) => setFinType(v === 'all' ? '' : (v as any))}
+            >
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="income">Entrada</SelectItem>
                 <SelectItem value="expense">Saída</SelectItem>
               </SelectContent>
