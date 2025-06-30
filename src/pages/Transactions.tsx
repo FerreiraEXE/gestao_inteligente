@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Plus } from "lucide-react";
+import TransactionList from "@/components/transactions/TransactionList";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -74,6 +75,8 @@ export default function Transactions() {
           icon: <Plus className="h-4 w-4" />,
         }}
       />
+
+      <TransactionList />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
