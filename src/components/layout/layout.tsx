@@ -116,6 +116,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       href: "/transacoes",
       icon: <Receipt className="h-5 w-5" />,
     },
+    {
+      title: "Relatórios",
+      href: "/relatorios",
+      icon: <Receipt className="h-5 w-5" />,
+    },
   ];
 
   const filteredNavItems = navItems.filter(
