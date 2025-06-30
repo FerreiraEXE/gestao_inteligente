@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useProducts } from '@/contexts/ProductContext';
 import { useSuppliers } from '@/contexts/SupplierContext';
 import {
@@ -9,6 +10,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Edit, Trash } from 'lucide-react';
 import { Product } from '@/types';
 
@@ -20,12 +29,57 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
   const { products, categories = [] } = useProducts();
   const { suppliers } = useSuppliers();
 
+  const [search, setSearch] = useState('');
+  const [supplierId, setSupplierId] = useState('');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+
   const active = products.filter((p) => p.isActive);
 
+  const filtered = active.filter((p) => {
+    const matchName = p.name.toLowerCase().includes(search.toLowerCase());
+    const matchSupplier = supplierId ? p.supplierId === supplierId : true;
+    return matchName && matchSupplier;
+  });
+
+  const sorted = [...filtered].sort((a, b) =>
+    order === 'asc' ? a.price - b.price : b.price - a.price
+  );
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-4">
+        <Input
+          placeholder="Buscar por nome..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+        />
+        <Select value={supplierId} onValueChange={setSupplierId}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Fornecedor" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos</SelectItem>
+            {suppliers.map((s) => (
+              <SelectItem key={s.id} value={s.id}>
+                {s.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={order} onValueChange={(v) => setOrder(v as 'asc' | 'desc')}>
+          <SelectTrigger className="w-56">
+            <SelectValue placeholder="Ordenar por preço" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="asc">Preço crescente</SelectItem>
+            <SelectItem value="desc">Preço decrescente</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
           <TableHead>Nome</TableHead>
           <TableHead>SKU</TableHead>
           <TableHead>Categoria</TableHead>
@@ -34,9 +88,9 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
           <TableHead>Estoque</TableHead>
           <TableHead className="text-right">Ações</TableHead>
         </TableRow>
-      </TableHeader>
-      <TableBody>
-        {active.map((p) => {
+        </TableHeader>
+        <TableBody>
+        {sorted.map((p) => {
           const category = categories.find((c) => c.id === p.categoryId);
           const supplier = suppliers.find((s) => s.id === p.supplierId);
           return (
@@ -63,9 +117,10 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
               </TableCell>
             </TableRow>
           );
-        })}
-      </TableBody>
-    </Table>
+        })
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 

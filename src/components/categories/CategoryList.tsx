@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useProducts } from '@/contexts/ProductContext';
 import {
   Table,
@@ -8,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Edit, Trash } from 'lucide-react';
 import { Category } from '@/types';
 
@@ -18,18 +20,30 @@ interface CategoryListProps {
 
 export function CategoryList({ onEdit, onDelete }: CategoryListProps) {
   const { categories } = useProducts();
+  const [search, setSearch] = useState('');
+
+  const filtered = categories.filter((c) =>
+    `${c.name} ${c.description}`.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nome</TableHead>
-          <TableHead>Descrição</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {categories.map((c) => (
+    <div className="space-y-4">
+      <Input
+        placeholder="Buscar categoria..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="max-w-sm"
+      />
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nome</TableHead>
+            <TableHead>Descrição</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+        {filtered.map((c) => (
           <TableRow key={c.id}>
             <TableCell>{c.name}</TableCell>
             <TableCell>{c.description}</TableCell>
@@ -43,8 +57,9 @@ export function CategoryList({ onEdit, onDelete }: CategoryListProps) {
             </TableCell>
           </TableRow>
         ))}
-      </TableBody>
-    </Table>
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
